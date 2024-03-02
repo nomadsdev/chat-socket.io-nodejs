@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai&display=swap');
+        *{
+            font-family: "Noto Sans Thai", sans-serif;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="flex justify-center px-5 pt-20">
+        <div class="w-full max-w-2xl">
+            <div class="w-full p-5 rounded-md border shadow">
+                <div class="w-full h-[200px] overflow-y-auto">
+                    <ul id="messages"></ul>
+                </div>
+                <form id="form" action="" class="flex gap-5 justify-center pt-5">
+                    <input id="name" autocomplete="off" placeholder="ชื่อของคุณ" class="border rounded-md px-5 py-1 text-sm">
+                    <input id="message" autocomplete="off" placeholder="พิมพ์ข้อความ..." class="border rounded-md px-5 py-1 text-sm">
+                    <button type="submit" class="px-10 py-1 border border-blue-500 rounded-md text-blue-500 text-sm hover:bg-blue-500 hover:text-white transition">ส่ง</button>
+                </form>
+            </div>
+        </div>
+    </div>      
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        document.getElementById('form').addEventListener('submit', (e) => {
+          e.preventDefault();
+          const nameInput = document.getElementById('name');
+          const messageInput = document.getElementById('message');
+          const name = nameInput.value;
+          const message = messageInput.value;
+          if (name && message) {
+            socket.emit('chat message', { name, message });
+            messageInput.value = '';
+          }
+        });
+
+        socket.on('chat message', (msg) => {
+          const item = document.createElement('li');
+          item.textContent = `${msg.name}: ${msg.message}`;
+          document.getElementById('messages').appendChild(item);
+        });
+    </script>
+    
+</body>
+</html>
